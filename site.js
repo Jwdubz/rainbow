@@ -56,10 +56,16 @@
   window.addEventListener('touchmove',blockLockedScroll,{passive:false});
   window.addEventListener('keydown',blockLockedScroll);
 
+  var heroUnlockSafety=0;
   function unlockHeroOnce(){
     if(heroUnlockDone) return;
     heroUnlockDone=true;
+    clearTimeout(heroUnlockSafety);
     if(film){
+      try{
+        film.removeEventListener('ended',unlockHeroOnce);
+        film.removeEventListener('timeupdate',onHeroProgress);
+      }catch(err){}
       film.loop=true;
       film.setAttribute('loop','');
       play(film);
@@ -68,7 +74,8 @@
     if(lenis && !root.classList.contains('is-loading')) lenis.start();
     showScrollCue();
   }
-  /* Scroll cue: only after unlock; dismiss on first scroll or ~3.5s */
+  /* Scroll cue: static "Scroll" once after unlock; dismiss on first scroll or ~4s.
+     No letter/word loop on the cue itself. */
   function showScrollCue(){
     var cue=document.querySelector('.scroll-cue');
     if(!cue || root.classList.contains('is-hero-lock') || root.classList.contains('is-loading')) return;
@@ -78,6 +85,7 @@
       gone=true;
       cue.classList.remove('is-on');
       cue.setAttribute('aria-hidden','true');
+      root.classList.remove('is-scroll-cue');
       window.removeEventListener('wheel',dismiss);
       window.removeEventListener('touchmove',dismiss);
       window.removeEventListener('keydown',onKey);
@@ -89,6 +97,9 @@
       var k=e.key;
       if(k==='ArrowDown'||k==='ArrowUp'||k==='PageDown'||k==='PageUp'||k==='Home'||k==='End'||k===' ') dismiss();
     }
+    /* ensure static text — no animated letter splits */
+    cue.innerHTML='<span>Scroll</span>';
+    root.classList.add('is-scroll-cue');
     cue.classList.add('is-on');
     cue.setAttribute('aria-hidden','false');
     window.addEventListener('wheel',dismiss,{passive:true});
@@ -100,13 +111,25 @@
     } else {
       window.addEventListener('scroll',dismiss,{passive:true});
     }
-    auto=setTimeout(dismiss,3500);
+    auto=setTimeout(dismiss,4000);
   }
   function onHeroProgress(){
     if(heroUnlockDone || !root.classList.contains('is-hero-lock')) return;
     if(!film) return;
     var d=film.duration;
     if(d && isFinite(d) && d>0 && film.currentTime >= d - 0.05) unlockHeroOnce();
+  }
+  function armHeroUnlockSafety(){
+    clearTimeout(heroUnlockSafety);
+    /* film may loop without ended in some engines — force unlock after duration+buffer */
+    var ms=22000;
+    if(film){
+      var d=film.duration;
+      if(d && isFinite(d) && d>0) ms=Math.round(d*1000)+1500;
+    }
+    heroUnlockSafety=setTimeout(function(){
+      if(!heroUnlockDone) unlockHeroOnce();
+    }, ms);
   }
 
   /* pass 7: frosted cream mast backing whenever scrolled - page type must never show through nav */
@@ -229,9 +252,14 @@
           if(film.currentTime>0.05) film.currentTime=0;
         }catch(err){}
         root.classList.add('is-hero-lock');
+        try{
+          film.loop=false;
+          film.removeAttribute('loop');
+        }catch(err){}
         film.addEventListener('ended',unlockHeroOnce);
         film.addEventListener('timeupdate',onHeroProgress);
         play(film);
+        armHeroUnlockSafety();
         /* already finished (cached / seek edge) */
         onHeroProgress();
         if(film.ended) unlockHeroOnce();
