@@ -295,7 +295,7 @@ html.is-paused .ticker-track{animation-play-state:paused}
 /* pass 74: Scroll cue Didone (--disp), absolute in hero stage (not fixed) */
 .scroll-cue{position:absolute;left:50%;top:50%;bottom:auto;transform:translate(-50%,-50%) translateY(8px);z-index:6;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .9s var(--expo),transform .9s var(--expo),visibility 0s linear .9s}
 .scroll-cue.is-on{opacity:1;visibility:visible;transform:translate(-50%,-50%);transition:opacity .9s var(--expo),transform .9s var(--expo),visibility 0s}
-.scroll-cue span{display:inline-block;font-family:var(--disp);font-size:clamp(20px,2vw,28px);font-weight:400;letter-spacing:.22em;line-height:1;text-transform:none;color:var(--gold-hi,#c9a84a);text-shadow:0 1px 2px rgba(0,0,0,.45);padding:10px 14px;animation:none!important}
+.scroll-cue span{display:inline-block;font-family:var(--disp);font-size:clamp(46px,7.6vw,138px);font-weight:400;letter-spacing:-.02em;line-height:1;text-transform:none;color:var(--gold-hi,#c9a84a);text-shadow:0 1px 2px rgba(0,0,0,.45);padding:10px 14px;animation:none!important}
 html.is-scroll-cue .open-h1{opacity:1;transition:opacity .6s var(--expo)}
 html.is-hero-lock .scroll-cue,html.is-loading .scroll-cue{opacity:0!important;visibility:hidden!important}
 @media (max-width:760px){
