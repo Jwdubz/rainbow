@@ -18,7 +18,7 @@
   btn.addEventListener('click',function(){
     paused=!paused;
     root.classList.toggle('is-paused',paused);
-    btn.textContent=paused?'Play Motion':'Pause Motion';
+    btn.textContent=paused?'Play':'Pause';
     btn.setAttribute('aria-pressed',String(paused));
     if(paused){vids.forEach(function(v){v.pause();});}
     else{seen.forEach(play);}
@@ -60,6 +60,14 @@
 
   var g=window.gsap, ST=window.ScrollTrigger;
   var film=document.querySelector('.open-film');
+  /* phone: lighter hero cut (same 1080 frame, smaller file) */
+  if(film && window.matchMedia('(max-width:760px)').matches){
+    var sm='film/hero-cinematic-sm.mp4';
+    if(film.getAttribute('src') && film.getAttribute('src').indexOf('hero-cinematic')>-1){
+      film.setAttribute('src', sm);
+      try{film.load();}catch(e){}
+    }
+  }
   if(g&&ST){
     g.registerPlugin(ST);
     if(lenis){lenis.on('scroll',ST.update);g.ticker.add(function(t){lenis.raf(t*1000);});g.ticker.lagSmoothing(0);}
@@ -96,7 +104,9 @@
         });
       }
       show(0);
-      g.fromTo('.slide',{xPercent:0},{xPercent:-50,ease:'none',scrollTrigger:{trigger:st,start:'top top',end:'bottom bottom',scrub:0.7}});
+      if(!phone){
+        g.fromTo('.slide',{xPercent:0},{xPercent:-50,ease:'none',scrollTrigger:{trigger:st,start:'top top',end:'bottom bottom',scrub:0.7}});
+      }
       ST.create({trigger:st,start:'top top',end:'bottom bottom',scrub:true,onUpdate:function(self){
         var p=self.progress;
         var idx=0;

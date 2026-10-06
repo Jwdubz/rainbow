@@ -69,6 +69,11 @@ html.is-scrolled .mast::before{opacity:1}
 .mast-nav a:hover{background:var(--ink);color:var(--paper);text-shadow:none}
 .pill:hover{background:var(--gold)}
 html.is-scrolled .brand,html.is-scrolled .mast-nav a{text-shadow:none}
+/* pass mobile: white brand is for film only - on cream mast it must read as ink */
+html.is-scrolled .brand{color:var(--ink)}
+html.is-scrolled .brand em{color:var(--gold)}
+html.is-scrolled .mast-nav a{color:var(--ink)}
+html.is-scrolled .mast-nav a:hover{background:var(--ink);color:var(--paper)}
 /* Pause: in mast chrome only - on scrolled backing it is a quiet outline, never a cream pill over media */
 .motion-toggle{border:1px solid var(--ink);position:static;right:auto;bottom:auto;z-index:auto;font-weight:500;font-size:13px;letter-spacing:.02em;color:var(--ink);padding:12px 16px;background:color-mix(in srgb,var(--paper) 82%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 html.is-scrolled .motion-toggle{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none}
@@ -159,30 +164,41 @@ html.is-scrolled .motion-toggle{background:transparent;backdrop-filter:none;-web
 /* paused state */
 html.is-paused .ticker-track{animation-play-state:paused}
 
-/* phone */
+/* phone - pass mobile 2026-10-06: first screen, type, film, nav/CTA, hero cinematic */
 @media (max-width:760px){
-  .mast{gap:6px;flex-wrap:nowrap;align-items:center}
+  :root{--mast:72px;--pad:16px;--film-max:100%}
+  .mast{gap:8px;flex-wrap:nowrap;align-items:center;padding:max(10px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 10px max(12px,env(safe-area-inset-left))}
   .mast-nav{display:none}
-  .brand{margin-right:auto;font-size:20px;padding:6px 12px;flex:0 1 auto;min-width:0}
-  .pill{padding:10px 12px;font-size:12px;flex:0 0 auto}
-  .motion-toggle{padding:10px 12px;font-size:12px;flex:0 0 auto;white-space:nowrap}
-  .open-film{clip-path:inset(var(--ci,5%) var(--cx,1%) round var(--cr,2px))}
-  .open-h1{font-size:clamp(38px,11vw,60px)}
+  .brand{margin-right:auto;font-size:18px;padding:6px 10px;flex:0 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:42vw}
+  .pill,.motion-toggle{padding:10px 14px;font-size:13px;flex:0 0 auto;white-space:nowrap;min-height:44px;min-width:44px}
+  /* hero: full-bleed cinematic, large I DO. */
+  .open{height:155vh}
+  .open-film{clip-path:inset(var(--ci,0%) var(--cx,0%) round var(--cr,0px));object-position:50% 38%}
   .r-top{top:calc(var(--mast) + 6px)}
   .r-bot{bottom:clamp(14px,3.5svh,28px)}
-  .open-after{grid-template-columns:1fr}
-  .display{font-size:clamp(40px,11.4vw,64px)}
-  .display.small{font-size:clamp(34px,9.6vw,56px)}
-  .reveal{height:min(56svh,420px);max-width:none;clip-path:inset(var(--ri,6%) var(--rx,4%) round 6px)}
-  .ch-body{grid-template-columns:1fr}
-  .ch-body p{grid-column:1;font-size:26px}
-  .inset{grid-row:auto;width:72%;margin-left:auto}
+  .open-after{grid-template-columns:1fr;padding:calc(var(--mast) + 18px) var(--pad) clamp(28px,5vw,48px);gap:18px}
+  .lede{font-size:clamp(16px,4.2vw,20px);max-width:34ch}
+  .acts{flex-direction:column;align-items:stretch;gap:10px}
+  .acts .btn{justify-content:center;width:100%;min-height:48px}
+  .display{font-size:clamp(42px,11.6vw,66px)}
+  .display.small{font-size:clamp(36px,10vw,56px)}
+  /* must beat .display - h1 carries both classes */
+  .open-h1,.display.open-h1{font-size:clamp(92px,26vw,140px);gap:clamp(2px,.8vh,10px);padding:calc(var(--mast) + 4px) 10px max(20px,env(safe-area-inset-bottom));line-height:.86}
+  .reveal{height:min(52svh,400px);max-width:none;clip-path:inset(var(--ri,4%) var(--rx,2%) round 4px);margin-inline:var(--pad);width:auto}
+  .ch-body{grid-template-columns:1fr;padding:clamp(18px,3vw,28px) var(--pad) 0}
+  .ch-body p{grid-column:1;font-size:clamp(22px,5.6vw,28px);max-width:28ch}
+  .inset{grid-row:auto;width:78%;margin-left:auto}
   .collage{grid-template-columns:repeat(6,1fr)}
   .c1{grid-column:1/5}.c2{grid-column:3/7;margin-top:-10vw!important}.c3{grid-column:1/4;margin-top:0!important}.c4{grid-column:1/7;margin-top:0!important}
-  .visit{grid-template-columns:1fr}
-  .visit-film{height:62svh}
-  .visit-copy{padding:calc(var(--mast) + 28px) var(--pad) 28px}
-  .visit{min-height:calc(100svh + 200px);padding-bottom:clamp(40px,8vw,72px)}
+  .visit{grid-template-columns:1fr;min-height:0;padding-bottom:clamp(40px,8vw,72px)}
+  .visit-film{height:52svh;min-height:280px}
+  .visit-copy{padding:calc(var(--mast) + 22px) var(--pad) max(28px,env(safe-area-inset-bottom));gap:20px}
+  .visit-copy .display{position:static;top:auto;padding-bottom:8px}
+  .loader{font-size:clamp(30px,8.5vw,48px);padding:0 18px}
+  .loader-mid{flex-wrap:wrap;justify-content:center;row-gap:6px}
+  .loader-bar{left:16px;right:16px;bottom:max(18px,env(safe-area-inset-bottom))}
+  .credit{font-size:11px;line-height:1.4}
+  .foot{padding:clamp(36px,6vw,64px) var(--pad) max(calc(var(--pad)*4),env(safe-area-inset-bottom))}
 }
 
 .brand,.foot a{min-height:44px;display:inline-flex;align-items:center}
@@ -233,20 +249,30 @@ html.is-paused .ticker-track{animation-play-state:paused}
 .foot-word{flex-basis:100%;margin:28px 0 0!important;font-family:var(--disp);text-transform:uppercase;white-space:nowrap;line-height:.8;letter-spacing:-.03em;color:var(--gold-hi);font-size:var(--fw,13vw);display:inline-block}
 
 @media (max-width:760px){
-  .stepper{height:200vh}
-  .stepper-stage{width:calc(100% - 2*var(--pad));margin:calc(var(--mast) + var(--pad)) auto 0}
-  .slide{font-size:42px;padding:0 var(--pad)}
-  .band-row{flex-direction:column;align-items:flex-start;gap:8px;padding-top:14px}
-  .band-row .band-body{text-align:left;max-width:none}
-  .diptych{grid-template-columns:1fr}
-  .dip-sticky{position:relative;height:70svh;top:0}
-  .dip-copy{gap:36px;padding:24px 0 0}
-  .dip-still{width:80%}
+  .stepper{height:190vh}
+  .stepper-stage{width:calc(100% - 2*var(--pad));max-width:none;margin:calc(var(--mast) + 12px) auto 0;aspect-ratio:3/4;height:auto;max-height:none;justify-self:stretch}
+  /* static garden headline on phone - marquee mid-cut reads as broken */
+  .slide-clip{overflow:visible;min-height:0}
+  .slide{display:block;white-space:normal;width:auto;max-width:100%;font-size:clamp(40px,11.2vw,58px);padding:0 var(--pad);transform:none!important;will-change:auto;line-height:.92}
+  .slide>span{display:block}
+  .slide>span[aria-hidden="true"]{display:none}
+  .band-row{flex-direction:column;align-items:flex-start;gap:8px;padding:14px var(--pad) 0}
+  .band-row .band-body{text-align:left;max-width:none;font-size:14px;line-height:1.45}
+  .diptych{grid-template-columns:1fr;padding:calc(var(--mast) + 18px) var(--pad) clamp(24px,4vw,40px)}
+  .dip-sticky{position:relative;height:auto;max-height:none;top:0;aspect-ratio:4/5;width:100%}
+  .dip-block .display{font-size:clamp(40px,11vw,60px)}
+  .dip-body{font-size:clamp(20px,5.2vw,28px);max-width:26ch;margin-top:18px}
+  .dip-copy{gap:28px;padding:20px 0 0}
+  .dip-still{width:86%;max-width:320px}
+  .pushgrid{padding:calc(var(--mast) + 18px) 0 clamp(24px,4vw,40px)}
+  .push-body{font-size:clamp(18px,4.8vw,24px);max-width:32ch}
   .push-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto;gap:12px}
   .pg-a{grid-column:1/3;grid-row:1;aspect-ratio:16/10;max-height:none}
   .pg-b{grid-column:1/3;grid-row:2}
   .pg-c{grid-column:1;grid-row:3}
   .pg-d{grid-column:2;grid-row:3}
+  .together{padding:calc(var(--mast) + 28px) 0 clamp(40px,8vw,72px)}
+  .ticker-track span{font-size:clamp(24px,6.5vw,36px)}
 }
 
 /* pass 10: hero opens near full-bleed (JS ends clip at 0/0) - Jarrett maximize viewport */
