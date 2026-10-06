@@ -260,7 +260,7 @@
             if(done) setTimeout(done,700);
           }
         }
-        // Loop: wait 3s → I in → hold 7s → I out → DO. in (3.4s) → hold 0.75s → DO. out → repeat
+        // Loop: wait 3s → I in → hold 7s → I out → DO. in (3.4s) → hold 3s → DO. out → repeat
         function cycle(my){
           if(my!==gen || paused) return;
           setTimeout(function(){
@@ -276,7 +276,7 @@
                     setTimeout(function(){
                       if(my!==gen || paused) return;
                       fadeOut(dEl, function(){ cycle(my); });
-                    }, 750);
+                    }, 3000);
                   });
                 });
               }, 7000);
