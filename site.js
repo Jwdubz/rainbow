@@ -66,6 +66,41 @@
     }
     root.classList.remove('is-hero-lock');
     if(lenis && !root.classList.contains('is-loading')) lenis.start();
+    showScrollCue();
+  }
+  /* Scroll cue: only after unlock; dismiss on first scroll or ~3.5s */
+  function showScrollCue(){
+    var cue=document.querySelector('.scroll-cue');
+    if(!cue || root.classList.contains('is-hero-lock') || root.classList.contains('is-loading')) return;
+    var gone=false, auto=0, onLenis=null;
+    function dismiss(){
+      if(gone) return;
+      gone=true;
+      cue.classList.remove('is-on');
+      cue.setAttribute('aria-hidden','true');
+      window.removeEventListener('wheel',dismiss);
+      window.removeEventListener('touchmove',dismiss);
+      window.removeEventListener('keydown',onKey);
+      window.removeEventListener('scroll',dismiss);
+      if(lenis && onLenis){ try{lenis.off('scroll',onLenis);}catch(err){} }
+      clearTimeout(auto);
+    }
+    function onKey(e){
+      var k=e.key;
+      if(k==='ArrowDown'||k==='ArrowUp'||k==='PageDown'||k==='PageUp'||k==='Home'||k==='End'||k===' ') dismiss();
+    }
+    cue.classList.add('is-on');
+    cue.setAttribute('aria-hidden','false');
+    window.addEventListener('wheel',dismiss,{passive:true});
+    window.addEventListener('touchmove',dismiss,{passive:true});
+    window.addEventListener('keydown',onKey);
+    if(lenis){
+      onLenis=function(){ if((lenis.scroll||0)>4) dismiss(); };
+      lenis.on('scroll',onLenis);
+    } else {
+      window.addEventListener('scroll',dismiss,{passive:true});
+    }
+    auto=setTimeout(dismiss,3500);
   }
   function onHeroProgress(){
     if(heroUnlockDone || !root.classList.contains('is-hero-lock')) return;
