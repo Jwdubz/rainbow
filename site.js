@@ -36,18 +36,43 @@
       ev.preventDefault(); lenis.scrollTo(t,{duration:1.6,easing:function(x){return x===1?1:1-Math.pow(2,-10*x);}});
     });});
   }
-  function blockLoadScroll(e){
-    if(!root.classList.contains('is-loading')) return;
+  /* scroll lock while loader OR hero cinematic first playthrough */
+  var heroUnlockDone=false;
+  function scrollLocked(){
+    return root.classList.contains('is-loading') || root.classList.contains('is-hero-lock');
+  }
+  function blockLockedScroll(e){
+    if(!scrollLocked()) return;
     if(e.type==='keydown'){
       var k=e.key;
+      /* allow Space on Pause / links / fields; only block scroll keys */
+      if(k===' ' && e.target && e.target.closest && e.target.closest('button,a,input,textarea,select,[contenteditable]')) return;
       if(k==='ArrowDown'||k==='ArrowUp'||k==='PageDown'||k==='PageUp'||k==='Home'||k==='End'||k===' ') e.preventDefault();
       return;
     }
     e.preventDefault();
   }
-  window.addEventListener('wheel',blockLoadScroll,{passive:false});
-  window.addEventListener('touchmove',blockLoadScroll,{passive:false});
-  window.addEventListener('keydown',blockLoadScroll);
+  window.addEventListener('wheel',blockLockedScroll,{passive:false});
+  window.addEventListener('touchmove',blockLockedScroll,{passive:false});
+  window.addEventListener('keydown',blockLockedScroll);
+
+  function unlockHeroOnce(){
+    if(heroUnlockDone) return;
+    heroUnlockDone=true;
+    if(film){
+      film.loop=true;
+      film.setAttribute('loop','');
+      play(film);
+    }
+    root.classList.remove('is-hero-lock');
+    if(lenis && !root.classList.contains('is-loading')) lenis.start();
+  }
+  function onHeroProgress(){
+    if(heroUnlockDone || !root.classList.contains('is-hero-lock')) return;
+    if(!film) return;
+    var d=film.duration;
+    if(d && isFinite(d) && d>0 && film.currentTime >= d - 0.05) unlockHeroOnce();
+  }
 
   /* pass 7: frosted cream mast backing whenever scrolled - page type must never show through nav */
   function syncScrolled(){
@@ -161,7 +186,23 @@
       try{window.scrollTo(0,0);}catch(err){}
       if(lenis){lenis.scrollTo(0,{immediate:true});}
       root.classList.remove('is-loading');root.classList.add('is-done');
-      if(lenis){lenis.start();}
+      /* hold Lenis + native scroll until hero cinematic plays through once */
+      if(film){
+        try{
+          film.loop=false;
+          film.removeAttribute('loop');
+          if(film.currentTime>0.05) film.currentTime=0;
+        }catch(err){}
+        root.classList.add('is-hero-lock');
+        film.addEventListener('ended',unlockHeroOnce);
+        film.addEventListener('timeupdate',onHeroProgress);
+        play(film);
+        /* already finished (cached / seek edge) */
+        onHeroProgress();
+        if(film.ended) unlockHeroOnce();
+      } else {
+        unlockHeroOnce();
+      }
       (function idoFade(){
         var iEl=document.querySelector('.open-h1 .ido-i');
         var dEl=document.querySelector('.open-h1 .ido-do');
