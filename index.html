@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en" class="is-loading">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rainbow Gardens · Las Vegas</title>
+<meta name="description" content="Your whole night Can Happen here. Rainbow Gardens, 4125 W. Charleston Blvd., Las Vegas.">
+<link rel="icon" href="data:,">
+<link rel="preload" href="fonts/InstrumentSerif-Regular.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="fonts/MonaSans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="img/poster.jpg" as="image">
+<link rel="stylesheet" href="site.css?v=live1">
+</head>
+<body>
+<a class="skip" href="#night">Skip to the Experience</a>
+
+<div class="loader" aria-hidden="true">
+  <p class="loader-line"><span>Your Whole Night</span></p>
+  <p class="loader-line loader-mid"><em>Can</em><span class="loader-window"><video src="film/lights.mp4" autoplay muted loop playsinline preload="auto"></video></span><em>Happen</em></p>
+  <p class="loader-line"><span>Here.</span></p>
+  <div class="loader-bar"><i></i><b>0%</b></div>
+</div>
+
+<header class="mast">
+  <a class="brand" href="#top" aria-label="Rainbow Gardens, back to the opening">Rainbow <em>Gardens</em></a>
+  <nav class="mast-nav" aria-label="Page">
+    <a href="#rooms">See the Rooms</a>
+    <a href="#together">What Stays Together</a>
+  </nav>
+  <button class="motion-toggle" type="button" aria-pressed="false">Pause Motion</button>
+  <a class="pill" href="#visit">See Your Date</a>
+</header>
+
+<main id="top">
+  <section class="open" aria-labelledby="h1">
+    <div class="stage">
+      <video class="open-film" src="film/hero-cinematic.mp4" poster="img/poster.jpg" autoplay muted loop playsinline preload="auto"></video>
+      <h1 id="h1" class="display open-h1" aria-label="I do.">
+        <span class="ido ido-i" aria-hidden="true">I</span>
+        <span class="ido ido-do" aria-hidden="true">DO.</span>
+      </h1>
+    </div>
+  </section>
+  <section class="open-after">
+    <p class="credit" id="film-credit">Film cut from Memory Lane Video weddings at Rainbow Gardens (rights confirmed). Not shot for this page.</p>
+    <p class="lede">Get married under the palms, walk inside for dinner, and keep the room moving until the last song.</p>
+    <div class="acts">
+      <a class="btn btn-ink" href="#night">Walk Through the Night</a>
+      <a class="btn btn-line" href="#visit">Ask to See Your Date</a>
+    </div>
+  </section>
+
+  <div id="night"></div>
+
+  <section class="chapter" id="rooms" data-n="01">
+    <header class="ch-head">
+      <p class="ch-n">01 &nbsp;Courtyard</p>
+      <h2 class="display"><span class="row"><span>Start Under</span></span><span class="row"><span><em>The Palms.</em></span></span></h2>
+    </header>
+    <div class="reveal"><video src="film/courtyard.mp4" muted loop playsinline preload="metadata" poster="img/o-22.jpg"></video></div>
+    <div class="ch-body">
+      <p>The courtyard and Formal Room belong together, so the ceremony does not have to send everyone somewhere else.</p>
+      <figure class="inset"><video src="film/vows.mp4" muted loop playsinline preload="metadata"></video></figure>
+    </div>
+  </section>
+
+  <!-- 02 Garden Room: one capped frame, hard cuts (no seam / no crossfade ghost). Soft entrance cut dropped; interior-only loop + still. -->
+  <section class="stepper" aria-labelledby="h-garden">
+    <div class="stepper-pin">
+      <div class="stepper-stage">
+        <figure class="step s1 is-on"><img src="img/fairy-lights.jpg" alt="Garden Room trees wrapped in fairy lights" loading="eager"></figure>
+        <figure class="step s2"><video src="film/garden-room.mp4" muted loop playsinline preload="metadata"></video></figure>
+        <figure class="step s3"><img src="img/o-56.jpg" alt="Garden Room tables set among the plants and lights" loading="lazy"></figure>
+      </div>
+      <div class="stepper-band">
+        <div class="slide-clip" aria-hidden="false">
+          <h2 id="h-garden" class="display slide"><span>Or Keep Every <em>Minute</em> Indoors.</span><span aria-hidden="true">Or Keep Every <em>Minute</em> Indoors.</span></h2>
+        </div>
+        <div class="band-row"><p class="ch-n">02 &nbsp;Garden Room</p><p class="band-body">The covered, enclosed Garden Room is climate-controlled and set among tropical plants and thousands of lights.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 Dinner: diptych, sticky film on one side, copy and a still scroll past on the other (Vero DiptychStickyMedia idiom). -->
+  <section class="diptych" aria-labelledby="h-dinner">
+    <div class="dip-media"><div class="dip-sticky"><video src="film/dinner.mp4" muted loop playsinline preload="metadata"></video></div></div>
+    <div class="dip-copy">
+      <div class="dip-block">
+        <p class="ch-n">03 &nbsp;Dinner</p>
+        <h2 id="h-dinner" class="display"><span class="row"><span>Dinner Is</span></span><span class="row"><span><em>Already</em> Waiting.</span></span></h2>
+        <p class="dip-body">The Deluxe plan brings the room, food, hosted bar, staff, linens and tables into the same night.</p>
+      </div>
+      <figure class="dip-still"><img src="img/v-208.jpg" alt="A couple at the head table in the garden lights" loading="lazy"></figure>
+    </div>
+  </section>
+
+  <!-- 04 Dancing: MediaGridPush (Vero), statement + staggered push grid. Distinct from hero window-grow and from the old chip→scale-in. -->
+  <section class="pushgrid" aria-labelledby="h-dance">
+    <header class="ch-head push-head">
+      <p class="ch-n">04 &nbsp;Dancing</p>
+      <h2 id="h-dance" class="display"><span class="row"><span>Then the Room Turns</span></span><span class="row"><span><em>Over To</em> Dancing.</span></span></h2>
+      <p class="push-body">The DJ, cake, photography, coordinator, setup and cleanup can all stay inside the plan.</p>
+    </header>
+    <div class="push-grid" aria-hidden="false">
+      <figure class="pg pg-a"><video src="film/dance.mp4" muted loop playsinline preload="metadata"></video></figure>
+      <figure class="pg pg-b"><img src="img/v-156.jpg" alt="The wedding party celebrating on the dance floor under the garden lights" loading="lazy"></figure>
+      <figure class="pg pg-c"><img src="img/dance-a.jpg" alt="The couple entering the celebration with hands raised" loading="lazy"></figure>
+      <figure class="pg pg-d"><img src="img/dance-c.jpg" alt="The couple cheering as the room turns over to dancing" loading="lazy"></figure>
+    </div>
+  </section>
+
+  <section class="together" id="together" aria-labelledby="h-together">
+    <h2 id="h-together" class="display small"><span class="row"><span>One Address. One Team.</span></span><span class="row"><span><em>No Hard Stop</em> in the</span></span><span class="row"><span>Middle of the Night.</span></span></h2>
+    <div class="ticker" aria-hidden="true"><div class="ticker-track"><span>Ceremony</span><span>Room</span><span>Dinner</span><span>Hosted bar</span><span>DJ</span><span>Cake</span><span>Photography</span><span>Coordinator</span><span>Setup</span><span>Cleanup</span><span>Ceremony</span><span>Room</span><span>Dinner</span><span>Hosted bar</span><span>DJ</span><span>Cake</span><span>Photography</span><span>Coordinator</span><span>Setup</span><span>Cleanup</span></div></div>
+    <p class="together-body">Ceremony. Room. Dinner. Hosted bar. DJ. Cake. Photography. A coordinator there for the event. Setup and cleanup.</p>
+    <div class="collage">
+      <figure class="c1"><img src="img/o-16.jpg" alt="Palms over the courtyard garden" loading="lazy"></figure>
+      <figure class="c2"><img src="img/v-4.jpg" alt="The gated entrance with the welcome sign" loading="lazy"></figure>
+      <figure class="c3"><img src="img/o-47.jpg" alt="The rock waterfall lit at night" loading="lazy"></figure>
+      <figure class="c4"><img src="img/garden-tables.jpg" alt="Garden Room tables set with glowing purple orchid centerpieces" loading="lazy"></figure>
+    </div>
+  </section>
+
+  <section class="visit" id="visit" aria-labelledby="h-visit">
+    <div class="visit-film"><video src="film/courtyard.mp4" muted loop playsinline preload="metadata" poster="img/o-22.jpg"></video></div>
+    <div class="visit-copy">
+      <h2 id="h-visit" class="display small"><span class="row"><span>Bring Us the Date</span></span><span class="row"><span><em>You Are Holding.</em></span></span><span class="row"><span>We’ll Show You the Room.</span></span></h2>
+      <p>Rainbow Gardens is open seven days by appointment at 4125 W. Charleston Boulevard.</p>
+      <div class="acts">
+        <a class="btn btn-ink" href="https://rainbowgardenslv.com/contact-us/">Ask About Your Date</a>
+        <a class="btn btn-line" href="tel:+17028784646">Call (702) 878-4646</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p class="foot-word" aria-hidden="true">Rainbow Gardens</p>
+  <p><a href="https://www.google.com/maps/search/?api=1&amp;query=4125+W.+Charleston+Blvd.+Las+Vegas+NV+89102">4125 W. Charleston Blvd., Las Vegas, NV 89102</a></p>
+  <p><a href="https://rainbowgardenslv.com/">Visit the Current Rainbow Gardens Site</a></p>
+</footer>
+
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/lenis.min.js"></script>
+<script src="site.js?v=live1"></script>
+</body>
+</html>

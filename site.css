@@ -1,0 +1,267 @@
+@font-face{font-family:"Instrument Serif";src:url(fonts/InstrumentSerif-Regular.ttf) format("truetype");font-weight:400;font-style:normal;font-display:block}
+@font-face{font-family:"Instrument Serif";src:url(fonts/InstrumentSerif-Italic.ttf) format("truetype");font-weight:400;font-style:italic;font-display:block}
+@font-face{font-family:"Mona Sans";src:url(fonts/MonaSans-latin.woff2) format("woff2");font-weight:200 900;font-stretch:75% 125%;font-display:swap}
+:root{
+  --paper:#f3efe8;--paper-2:#e9e2d6;--ink:#1b1714;--ink-2:#5d544b;--gold:#b8861c;--gold-hi:#c9a84a;
+  --pad:clamp(16px,1.6vw,28px);--gap:clamp(14px,5.5vw,88px);
+  --mast:96px; /* pass 6: real mast ≈90px (pad+pills); was 72 and under-cleared */
+  --film-max:900px; /* editorial max so soft 1600px sources are not stretched */
+  --expo:cubic-bezier(.19,1,.22,1);--expo-io:cubic-bezier(.87,0,.13,1);
+  --disp:"Instrument Serif",Georgia,"Times New Roman",serif;--sans:"Mona Sans","Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{background:var(--paper);color:var(--ink);-webkit-text-size-adjust:100%;scroll-padding-top:calc(var(--mast) + 20px)}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+body{margin:0;font-family:var(--sans);font-size:clamp(15px,1.05vw,18px);line-height:1.5;letter-spacing:-.005em;overflow-x:hidden}
+img,video{display:block;max-width:100%}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:4px;border-radius:4px}
+.skip{position:fixed;left:var(--pad);top:-80px;z-index:100;background:var(--ink);color:var(--paper);padding:14px 18px;border-radius:999px;text-decoration:none}
+.skip:focus{top:var(--pad)}
+
+/* type */
+.display{font-family:var(--disp);font-weight:400;text-transform:uppercase;font-size:clamp(46px,7.6vw,138px);line-height:.92;letter-spacing:-.02em;margin:0}
+.display em{font-style:italic;text-transform:none;color:var(--gold);letter-spacing:-.01em}
+.display.small{font-size:clamp(40px,5.6vw,104px)}
+/* pass 7: room for italic descenders (e.g. "you are holding.") - .06em was clipping mid-letter */
+.row{display:block;overflow:hidden;padding-bottom:.28em;margin-bottom:-.14em}
+.row>span{display:inline-block;will-change:transform}
+
+/* loader: headline with a film window, progress rule - fully covers main until dismiss */
+.loader{position:fixed;inset:0;z-index:90;background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-family:var(--disp);text-transform:uppercase;color:var(--gold-hi,#c9a84a);font-size:clamp(38px,5.4vw,88px);line-height:1;transition:clip-path 1.1s var(--expo-io);clip-path:inset(0 0 0 0)}
+.loader-line{margin:0}
+.loader-mid{display:flex;align-items:center;gap:.25em}
+.loader-mid em{font-style:italic;text-transform:none}
+.loader-window{display:inline-block;width:1.4em;height:.86em;overflow:hidden;border-radius:2px}
+.loader-window video{width:100%;height:100%;object-fit:cover}
+.loader-bar{position:absolute;left:var(--pad);right:var(--pad);bottom:calc(var(--pad)*1.4);height:1px;background:rgba(243,239,232,.22)}
+.loader-bar i{position:absolute;left:0;top:0;height:1px;width:0;background:var(--ink)}
+.loader-bar b{position:absolute;right:0;bottom:8px;font:500 12px/1 var(--sans);letter-spacing:.06em;color:var(--ink-2)}
+html.is-done .loader{clip-path:inset(0 0 100% 0);pointer-events:none}
+/* pass 5: hide main hero type until loader dismisses - no flash of "can happen HERE" */
+html.is-loading .open-h1,
+html.is-loading .open-film{visibility:hidden}
+html.is-done .open-h1,
+html.is-done .open-film{visibility:visible}
+/* pass 6: lock scroll while loading - page must not show under cover */
+html.is-loading,html.is-loading body{overflow:hidden!important;height:100%;overscroll-behavior:none;touch-action:none}
+html.is-loading .loader{opacity:1;background:var(--paper)}
+html.is-loading .mast{visibility:hidden}
+
+/* mast - flush to viewport top; Pause stays in chrome.
+   pass 7: no default translate (Lenis/compositor class of bug); frosted cream backing when scrolled
+   so section type never collides with nav links; Pause never floats over photos.
+   pass 8: never hide/retreat - End key must not park mast off-screen. */
+.mast{position:fixed;z-index:50;top:0;left:0;right:0;display:flex;align-items:center;gap:10px;padding:var(--pad);pointer-events:none;background:transparent;transform:none;isolation:isolate}
+.mast::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:var(--paper);backdrop-filter:blur(14px) saturate(1.05);-webkit-backdrop-filter:blur(14px) saturate(1.05);box-shadow:0 1px 0 rgba(243,239,232,.08);opacity:0;transition:opacity .15s var(--expo)}
+html.is-scrolled .mast::before{opacity:1}
+.mast>*{pointer-events:auto;position:relative;z-index:1}
+/* pass 8: no is-at-end / hide-on-scroll retreat - End key left mast at top:-102 until wheel-up.
+   Visit ROOM heading clears via sticky top:calc(var(--mast)+12px) + section padding (pass 6 layout). */
+/* brand / nav: plain over hero film; on scrolled cream they need no text-shadow */
+.brand{font-family:var(--disp);font-size:clamp(22px,1.7vw,30px);text-decoration:none;background:transparent;padding:8px 16px;border-radius:999px;line-height:1.1;text-shadow:0 1px 2px rgba(0,0,0,.55),0 0 12px rgba(0,0,0,.35)}
+.brand em{color:var(--gold)}
+.mast-nav{display:flex;gap:6px;margin-left:auto}
+.mast-nav a,.pill,.motion-toggle{font-size:14px;text-decoration:none;background:transparent;padding:12px 16px;border-radius:999px;letter-spacing:.01em;transition:background .25s var(--expo),color .25s var(--expo),border-color .25s var(--expo);border:0;cursor:pointer;font-family:var(--sans);line-height:1;min-height:44px;display:inline-flex;align-items:center}
+.mast-nav a{text-shadow:0 1px 2px rgba(0,0,0,.55),0 0 12px rgba(0,0,0,.35)}
+.pill{background:var(--ink);color:var(--paper);text-shadow:none}
+.mast-nav a:hover{background:var(--ink);color:var(--paper);text-shadow:none}
+.pill:hover{background:var(--gold)}
+html.is-scrolled .brand,html.is-scrolled .mast-nav a{text-shadow:none}
+/* Pause: in mast chrome only - on scrolled backing it is a quiet outline, never a cream pill over media */
+.motion-toggle{border:1px solid var(--ink);position:static;right:auto;bottom:auto;z-index:auto;font-weight:500;font-size:13px;letter-spacing:.02em;color:var(--ink);padding:12px 16px;background:color-mix(in srgb,var(--paper) 82%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+html.is-scrolled .motion-toggle{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none}
+.motion-toggle:hover{background:var(--ink);color:var(--paper)}
+
+/* opening: words around a film window; window grows to editorial inset (Vero idiom, our code) */
+.open{position:relative;height:170vh;background:var(--paper)}
+.stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:var(--paper)}
+/* Pass 32: full-bleed hero - fill the whole screen */
+.open-film{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  max-width:none;max-height:none;
+  object-fit:cover;
+  object-position:center center;
+  clip-path:inset(var(--ci,0%) var(--cx,0%) round var(--cr,0px));
+  will-change:clip-path;
+}
+/* pass 34: I → DO. fade sequence on hero */
+.open-h1{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(8px,1.5vh,20px);position:absolute;inset:0;pointer-events:none;text-align:center;font-size:clamp(72px,min(18vw,28vh),220px);line-height:.9;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.45),0 0 28px rgba(0,0,0,.35),0 8px 40px rgba(0,0,0,.4)}
+.open-h1 .ido{display:block;opacity:0;will-change:opacity,transform;transform:translateY(12px)}
+.open-h1 .ido.is-in{opacity:1;transform:none}
+.open-h1 .ido-i{color:var(--gold-hi,#c9a84a)}
+.open-h1 .ido-do{font-style:italic;color:var(--gold-hi,#c9a84a)}
+
+.r-top{top:calc(var(--mast) + clamp(10px,1.4vh,18px))}
+.r-bot{bottom:clamp(18px,3.2vh,36px)}
+.open-after{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--pad) var(--gap);align-items:end;padding:calc(var(--mast) + clamp(20px,2.2vw,32px)) var(--pad) clamp(20px,2.5vw,40px)}
+.open-after .credit{grid-column:1/-1;margin:0 0 clamp(14px,1.6vw,22px)}
+.lede{max-width:34ch;margin:0;font-size:clamp(17px,1.35vw,22px);color:var(--ink-2)}
+.acts{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;min-height:48px;padding:0 22px;border-radius:999px;text-decoration:none;font-size:15px;letter-spacing:.01em;transition:background .3s var(--expo),color .3s var(--expo),border-color .3s var(--expo)}
+.btn-ink{background:var(--ink);color:var(--paper)}
+.btn-ink:hover{background:var(--gold)}
+.btn-line{border:1px solid var(--ink)}
+.btn-line:hover{background:var(--ink);color:var(--paper)}
+.credit{margin:0;font-size:12px;color:var(--ink-2);letter-spacing:.02em;scroll-margin-top:calc(var(--mast) + 16px);position:relative;z-index:1}
+
+/* chapters - pass 5: scroll-margin + padding so sticky mast never clips headings */
+.chapter,.pushgrid,.diptych,.together,.visit,.stepper{scroll-margin-top:calc(var(--mast) + 16px)}
+.ch-head,.push-head,.dip-block,h2.display,.together .display,.visit-copy .display{
+  scroll-margin-top:calc(var(--mast) + 28px)
+}
+.ch-head .ch-n,.push-head .ch-n{scroll-margin-top:calc(var(--mast) + 20px)}
+.push-head{padding-top:8px}
+.chapter{position:relative;padding:calc(var(--mast) + clamp(20px,3vw,40px)) 0 clamp(12px,1.5vw,24px)}
+.ch-head{padding:0 var(--pad);text-align:center;margin-bottom:clamp(22px,3vw,48px)}
+.ch-n{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin:0 0 22px}
+.reveal{height:min(72vh,560px);max-width:var(--film-max);margin-inline:auto;overflow:hidden;clip-path:inset(var(--ri,8%) var(--rx,10%) round 6px);will-change:clip-path;border-radius:4px}
+.r-dance video{object-position:50% 25%}
+.reveal video{width:100%;height:120%;object-fit:cover;transform:translateY(var(--py,-8%))}
+.ch-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--gap);padding:clamp(20px,3vw,40px) var(--pad) 0;align-items:end;max-width:calc(var(--film-max) + 2*var(--pad));margin-inline:auto}
+.ch-body p{grid-column:2;margin:0;font-family:var(--disp);font-size:clamp(24px,2.3vw,40px);line-height:1.12;letter-spacing:-.01em;max-width:22ch}
+.inset{grid-column:1;grid-row:1;justify-self:end;margin:0;width:min(100%,300px);aspect-ratio:4/5;overflow:hidden;border-radius:4px}
+.inset video{width:100%;height:100%;object-fit:cover;object-position:62% 12%}
+
+/* together */
+.together{padding:calc(var(--mast) + clamp(40px,5vw,72px)) 0 clamp(56px,7vw,110px);text-align:center;background:var(--paper-2)}
+.together .display{padding:0 var(--pad)}
+.ticker{overflow:hidden;margin:clamp(24px,3.5vw,56px) 0;border-block:1px solid #cfc6b8;padding:14px 0}
+.ticker-track{display:flex;width:max-content;gap:0;animation:tick 38s linear infinite}
+.ticker-track span{font-family:var(--disp);font-style:italic;font-size:clamp(28px,3vw,52px);padding:0 .6em;white-space:nowrap}
+.ticker-track span::after{content:"·";margin-left:1.2em;color:var(--gold);font-style:normal}
+@keyframes tick{to{transform:translateX(-50%)}}
+.together-body{max-width:46ch;margin:0 auto;padding:0 var(--pad);color:var(--ink-2)}
+.collage{position:relative;display:grid;grid-template-columns:repeat(12,1fr);gap:var(--pad);padding:clamp(36px,5vw,80px) var(--pad) 0;text-align:left;max-width:1100px;margin-inline:auto}
+.collage figure{margin:0;overflow:hidden;border-radius:4px}
+.collage img{width:100%;height:100%;object-fit:cover;transform:scale(1.12)}
+.c1{grid-column:1/6;aspect-ratio:4/5}
+.c2{grid-column:7/11;aspect-ratio:1;margin-top:8vw!important}
+.c3{grid-column:2/5;aspect-ratio:3/4;margin-top:-2vw!important}
+.c4{grid-column:6/13;aspect-ratio:16/10;margin-top:2vw!important}
+
+/* visit */
+.visit{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100svh + 360px);background:var(--paper);scroll-margin-top:calc(var(--mast) + 16px);padding-bottom:clamp(48px,6vw,96px)}
+.visit-film{position:relative;overflow:hidden;min-height:100%}
+.visit-film video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.visit-copy{display:flex;flex-direction:column;justify-content:flex-start;gap:28px;padding:calc(var(--mast) + clamp(28px,3.5vw,48px)) clamp(28px,4vw,72px) 32px clamp(28px,4vw,72px)}
+.visit-copy .display{position:sticky;top:calc(var(--mast) + 12px);z-index:2;background:var(--paper);padding-bottom:12px;align-self:flex-start;width:100%;overflow:visible}
+.visit-copy p{margin:0;max-width:36ch;color:var(--ink-2);font-size:clamp(17px,1.3vw,21px)}
+
+.foot{display:flex;flex-wrap:wrap;gap:14px 40px;align-items:baseline;padding:clamp(40px,5vw,80px) var(--pad) calc(var(--pad)*5);background:var(--ink);color:var(--paper)}
+.foot p{margin:0}
+.foot-mark{font-family:var(--disp);font-size:clamp(40px,6vw,96px);flex-basis:100%;line-height:1}
+.foot-mark em{color:var(--gold-hi)}
+.foot a{text-decoration-thickness:1px;text-underline-offset:4px;display:inline-block;padding:10px 0}
+
+/* paused state */
+html.is-paused .ticker-track{animation-play-state:paused}
+
+/* phone */
+@media (max-width:760px){
+  .mast{gap:6px;flex-wrap:nowrap;align-items:center}
+  .mast-nav{display:none}
+  .brand{margin-right:auto;font-size:20px;padding:6px 12px;flex:0 1 auto;min-width:0}
+  .pill{padding:10px 12px;font-size:12px;flex:0 0 auto}
+  .motion-toggle{padding:10px 12px;font-size:12px;flex:0 0 auto;white-space:nowrap}
+  .open-film{clip-path:inset(var(--ci,5%) var(--cx,1%) round var(--cr,2px))}
+  .open-h1{font-size:clamp(38px,11vw,60px)}
+  .r-top{top:calc(var(--mast) + 6px)}
+  .r-bot{bottom:clamp(14px,3.5svh,28px)}
+  .open-after{grid-template-columns:1fr}
+  .display{font-size:clamp(40px,11.4vw,64px)}
+  .display.small{font-size:clamp(34px,9.6vw,56px)}
+  .reveal{height:min(56svh,420px);max-width:none;clip-path:inset(var(--ri,6%) var(--rx,4%) round 6px)}
+  .ch-body{grid-template-columns:1fr}
+  .ch-body p{grid-column:1;font-size:26px}
+  .inset{grid-row:auto;width:72%;margin-left:auto}
+  .collage{grid-template-columns:repeat(6,1fr)}
+  .c1{grid-column:1/5}.c2{grid-column:3/7;margin-top:-10vw!important}.c3{grid-column:1/4;margin-top:0!important}.c4{grid-column:1/7;margin-top:0!important}
+  .visit{grid-template-columns:1fr}
+  .visit-film{height:62svh}
+  .visit-copy{padding:calc(var(--mast) + 28px) var(--pad) 28px}
+  .visit{min-height:calc(100svh + 200px);padding-bottom:clamp(40px,8vw,72px)}
+}
+
+.brand,.foot a{min-height:44px;display:inline-flex;align-items:center}
+
+/* ===== 02 Garden Room stepper: ONE capped frame, opacity crossfade (no stacked seam / ghost) ===== */
+.stepper{position:relative;height:220vh}
+.stepper-pin{position:sticky;top:0;height:100vh;height:100svh;display:grid;grid-template-rows:1fr auto;align-content:center;overflow:hidden;background:var(--paper)}
+.stepper-stage{position:relative;overflow:hidden;isolation:isolate;width:min(var(--film-max),calc(100% - 2*var(--pad)));max-width:var(--film-max);aspect-ratio:16/9;height:auto;justify-self:center;align-self:end;margin:calc(var(--mast) + var(--pad)) auto 0;border-radius:4px;background:var(--paper)}
+.step{position:absolute;inset:0;margin:0;opacity:0;visibility:hidden;z-index:0;pointer-events:none;will-change:opacity}
+.step.is-on{opacity:1;visibility:visible;z-index:1}
+.step video,.step img{width:100%;height:100%;object-fit:cover;object-position:50% 35%;display:block;background:var(--paper)}
+
+/* marquee: clipped so slide never bleeds; caption row clear of Pause (now in mast) */
+.stepper-band{display:block;padding:clamp(12px,1.4vw,22px) 0 clamp(14px,1.8vw,26px);overflow:hidden}
+.slide-clip{overflow:hidden;width:100%;min-height:1.1em}
+.slide{display:flex;gap:.6em;white-space:nowrap;font-size:clamp(40px,5.6vw,100px);will-change:transform;width:max-content;margin:0;padding:0 var(--pad)}
+.band-row{display:flex;justify-content:space-between;align-items:baseline;gap:24px;padding:22px var(--pad) 0;position:relative;z-index:2}
+.band-row .ch-n{margin:0;padding:0;flex:0 0 auto}
+.band-row .band-body{margin:0;padding:0;max-width:44ch;font-size:15px;color:var(--ink-2);flex:1 1 auto;text-align:right}
+
+/* 03 diptych */
+.diptych{display:grid;grid-template-columns:1.15fr .85fr;gap:var(--pad);padding:calc(var(--mast) + clamp(24px,3vw,48px)) var(--pad) clamp(28px,3.5vw,56px);max-width:1100px;margin-inline:auto}
+.dip-sticky{position:sticky;top:calc(var(--mast) + var(--pad));height:calc(100vh - var(--mast) - 2*var(--pad));height:calc(100svh - var(--mast) - 2*var(--pad));max-height:560px;overflow:hidden;border-radius:4px}
+.dip-sticky video{width:100%;height:100%;object-fit:cover;object-position:50% 30%}
+.dip-copy{display:flex;flex-direction:column;justify-content:space-between;gap:clamp(48px,12vh,120px);padding:clamp(12px,4vh,48px) 0 0}
+.dip-block .display{font-size:clamp(42px,5vw,92px)}
+.dip-body{font-family:var(--disp);font-size:clamp(22px,2vw,34px);line-height:1.15;max-width:20ch;margin:28px 0 0}
+.dip-still{margin:0;aspect-ratio:4/5;overflow:hidden;border-radius:4px;width:78%;align-self:flex-end}
+.dip-still img{width:100%;height:100%;object-fit:cover;object-position:45% 40%}
+
+/* 04 MediaGridPush (Vero) - distinct from hero window-grow */
+.pushgrid{position:relative;padding:calc(var(--mast) + clamp(20px,3vw,40px)) 0 clamp(24px,3vw,48px)}
+.push-head{max-width:52ch;margin-inline:auto}
+.push-body{margin:clamp(16px,2vw,28px) auto 0;max-width:34ch;font-family:var(--disp);font-size:clamp(20px,1.8vw,30px);line-height:1.2;color:var(--ink)}
+.push-grid{display:grid;grid-template-columns:1.25fr .85fr .85fr;grid-template-rows:auto auto;gap:var(--pad);padding:clamp(18px,2.5vw,32px) var(--pad) 0;max-width:1100px;margin-inline:auto}
+.pg{margin:0;overflow:hidden;border-radius:4px;will-change:transform}
+.pg video,.pg img{width:100%;height:100%;object-fit:cover;display:block}
+.pg-a{grid-column:1;grid-row:1/3;aspect-ratio:3/4;max-height:560px}
+.pg-a video{object-position:50% 28%}
+.pg-b{grid-column:2/4;grid-row:1;aspect-ratio:16/9}
+.pg-b img{object-position:50% 40%}
+.pg-c{grid-column:2;grid-row:2;aspect-ratio:4/5}
+.pg-d{grid-column:3;grid-row:2;aspect-ratio:4/5}
+.pg-c img,.pg-d img{object-position:50% 20%}
+
+/* footer wordmark */
+.foot{overflow:hidden}
+.foot-word{flex-basis:100%;margin:28px 0 0!important;font-family:var(--disp);text-transform:uppercase;white-space:nowrap;line-height:.8;letter-spacing:-.03em;color:var(--gold-hi);font-size:var(--fw,13vw);display:inline-block}
+
+@media (max-width:760px){
+  .stepper{height:200vh}
+  .stepper-stage{width:calc(100% - 2*var(--pad));margin:calc(var(--mast) + var(--pad)) auto 0}
+  .slide{font-size:42px;padding:0 var(--pad)}
+  .band-row{flex-direction:column;align-items:flex-start;gap:8px;padding-top:14px}
+  .band-row .band-body{text-align:left;max-width:none}
+  .diptych{grid-template-columns:1fr}
+  .dip-sticky{position:relative;height:70svh;top:0}
+  .dip-copy{gap:36px;padding:24px 0 0}
+  .dip-still{width:80%}
+  .push-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto;gap:12px}
+  .pg-a{grid-column:1/3;grid-row:1;aspect-ratio:16/10;max-height:none}
+  .pg-b{grid-column:1/3;grid-row:2}
+  .pg-c{grid-column:1;grid-row:3}
+  .pg-d{grid-column:2;grid-row:3}
+}
+
+/* pass 10: hero opens near full-bleed (JS ends clip at 0/0) - Jarrett maximize viewport */
+.open-film{max-width:none}
+
+/* pass 27: hero film clean - type off the video */
+.visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+
+/* pass 33: mast nav links white on full-bleed film */
+.mast-nav a{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.55),0 0 12px rgba(0,0,0,.35)}
+.mast-nav a:hover{background:rgba(255,255,255,.14);color:#fff;text-shadow:none}
+
+/* pass 38: Rainbow word white on film */
+.brand{color:#fff}
+.brand em{color:var(--gold-hi,#c9a84a)}
+
+/* pass 44: loader type gold */
+.loader,.loader-line,.loader-mid em{color:var(--gold-hi,#c9a84a)}
