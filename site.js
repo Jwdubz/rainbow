@@ -260,7 +260,7 @@
             if(done) setTimeout(done,700);
           }
         }
-        // Loop: wait 3s → I in → hold 5s → I out → DO. in (3.4s) → hold 0.75s → DO. out → repeat
+        // Loop: wait 3s → I in → hold 7s → I out → DO. in (3.4s) → hold 0.75s → DO. out → repeat
         function cycle(my){
           if(my!==gen || paused) return;
           setTimeout(function(){
@@ -279,7 +279,7 @@
                     }, 750);
                   });
                 });
-              }, 5000);
+              }, 7000);
             });
           }, 3000);
         }
