@@ -79,40 +79,12 @@
   function showScrollCue(){
     var cue=document.querySelector('.scroll-cue');
     if(!cue || root.classList.contains('is-hero-lock') || root.classList.contains('is-loading')) return;
-    var gone=false, auto=0, onLenis=null;
-    function dismiss(){
-      if(gone) return;
-      gone=true;
-      cue.classList.remove('is-on');
-      cue.setAttribute('aria-hidden','true');
-      root.classList.remove('is-scroll-cue');
-      window.removeEventListener('wheel',dismiss);
-      window.removeEventListener('touchmove',dismiss);
-      window.removeEventListener('keydown',onKey);
-      window.removeEventListener('scroll',dismiss);
-      if(lenis && onLenis){ try{lenis.off('scroll',onLenis);}catch(err){} }
-      clearTimeout(auto);
-    }
-    function onKey(e){
-      var k=e.key;
-      if(k==='ArrowDown'||k==='ArrowUp'||k==='PageDown'||k==='PageUp'||k==='Home'||k==='End'||k===' ') dismiss();
-    }
-    /* ensure static text — no animated letter splits */
-    cue.innerHTML='<span>Scroll</span>';
-    root.classList.add('is-scroll-cue');
     cue.classList.add('is-on');
     cue.setAttribute('aria-hidden','false');
-    window.addEventListener('wheel',dismiss,{passive:true});
-    window.addEventListener('touchmove',dismiss,{passive:true});
-    window.addEventListener('keydown',onKey);
-    if(lenis){
-      onLenis=function(){ if((lenis.scroll||0)>4) dismiss(); };
-      lenis.on('scroll',onLenis);
-    } else {
-      window.addEventListener('scroll',dismiss,{passive:true});
-    }
-    auto=setTimeout(dismiss,4000);
+    root.classList.add('is-scroll-cue');
+    /* stay visible after unlock; no dismiss */
   }
+  
   function onHeroProgress(){
     if(heroUnlockDone || !root.classList.contains('is-hero-lock')) return;
     if(!film) return;
