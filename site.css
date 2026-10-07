@@ -331,3 +331,13 @@ html:not(.is-scrolled) .brand em{color:#e2c46a}
 
 /* pre-send: no one-word last lines in body copy */
 p,li,blockquote,figcaption{text-wrap:pretty}
+
+/* intro ends on "I DO." held in gold; Scroll cue sits below the words, never over them */
+.scroll-cue,html.is-ido-set .scroll-cue{top:auto;bottom:clamp(20px,4.5vh,52px);transform:translate(-50%,8px)}
+.scroll-cue.is-on,html.is-ido-set .scroll-cue.is-on{transform:translate(-50%,0)}
+.scroll-cue span{font-size:clamp(34px,4.2vw,76px)}
+@media (max-width:760px){
+  .scroll-cue,html.is-ido-set .scroll-cue{bottom:max(24px,env(safe-area-inset-bottom));transform:translate(-50%,6px)}
+  .scroll-cue.is-on,html.is-ido-set .scroll-cue.is-on{transform:translate(-50%,0)}
+  .scroll-cue span{font-size:clamp(30px,8.6vw,44px)}
+}

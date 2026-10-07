@@ -248,7 +248,7 @@
         if(!iEl||!dEl) return;
         var gen=0;
         function fadeIn(el, done){
-          var dur = (el === dEl) ? 1.6 : 0.9;
+          var dur = (el === dEl) ? 1.2 : 0.9;
           if(window.gsap){
             gsap.fromTo(el,{opacity:0,y:14},{opacity:1,y:0,duration:dur,ease:'power2.out',onComplete:done});
           } else {
@@ -256,19 +256,13 @@
             if(done) setTimeout(done, Math.round(dur*1000));
           }
         }
-        function fadeOut(el, done){
-          if(window.gsap){
-            gsap.to(el,{opacity:0,y:-10,duration:0.7,ease:'power2.in',onComplete:done});
-          } else {
-            el.style.opacity='0';
-            if(done) setTimeout(done,700);
-          }
-        }
-        // Once: wait 0.4s, I in, hold 1.6s, I out, DO. in, hold 1.2s, DO. out, then the Scroll cue. Never replays over the cue.
+        // Once: wait 0.4s, "I" in and holds, "DO." joins it, both stay up in gold; then the Scroll cue (below the words). Never replays.
+        function settle(el){ el.style.opacity='1'; el.style.transform='none'; el.classList.add('is-in'); }
         function finishIdo(){
           idoDone=true;
           if(window.gsap){ gsap.killTweensOf([iEl,dEl]); }
-          iEl.style.opacity='0'; dEl.style.opacity='0';
+          settle(iEl); settle(dEl);
+          root.classList.add('is-ido-set');
           showScrollCue();
         }
         function cycle(my){
@@ -279,17 +273,11 @@
               if(my!==gen || paused) return;
               setTimeout(function(){
                 if(my!==gen || paused) return;
-                fadeOut(iEl, function(){
+                fadeIn(dEl, function(){
                   if(my!==gen || paused) return;
-                  fadeIn(dEl, function(){
-                    if(my!==gen || paused) return;
-                    setTimeout(function(){
-                      if(my!==gen || paused) return;
-                      fadeOut(dEl, function(){ if(my===gen) finishIdo(); });
-                    }, 1200);
-                  });
+                  setTimeout(function(){ if(my===gen) finishIdo(); }, 500);
                 });
-              }, 1600);
+              }, 700);
             });
           }, 400);
         }
@@ -310,7 +298,7 @@
                 gen++;
                 finishIdo();
               }
-              /* Play never restarts I / DO. once the Scroll cue owns the center */
+              /* Play never restarts I / DO.; both words stay up */
             }, 0);
           });
         }
