@@ -328,3 +328,6 @@ html:not(.is-scrolled) .brand em{color:#e2c46a}
 /* pre-send: readable header controls on phone */
 .motion-toggle{font-size:14px}
 @media (max-width:760px){.pill,.motion-toggle{font-size:14px}}
+
+/* pre-send: no one-word last lines in body copy */
+p,li,blockquote,figcaption{text-wrap:pretty}
