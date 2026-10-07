@@ -37,7 +37,7 @@ a{color:inherit}
 .loader-window video{width:100%;height:100%;object-fit:cover}
 .loader-bar{position:absolute;left:var(--pad);right:var(--pad);bottom:calc(var(--pad)*1.4);height:1px;background:rgba(243,239,232,.22)}
 .loader-bar i{position:absolute;left:0;top:0;height:1px;width:0;background:var(--ink)}
-.loader-bar b{position:absolute;right:0;bottom:8px;font:500 12px/1 var(--sans);letter-spacing:.06em;color:var(--ink-2)}
+.loader-bar b{position:absolute;right:0;bottom:8px;font:500 14px/1 var(--sans);letter-spacing:.02em;color:var(--ink-2)}
 html.is-done .loader{clip-path:inset(0 0 100% 0);pointer-events:none}
 /* pass 5: hide main hero type until loader dismisses - no flash of "can happen HERE" */
 html.is-loading .open-h1,
@@ -324,3 +324,7 @@ html:not(.is-scrolled) .brand em{color:#e2c46a}
 }
 .scroll-cue{width:max-content;max-width:94vw}
 .scroll-cue span{white-space:nowrap}
+
+/* pre-send: readable header controls on phone */
+.motion-toggle{font-size:14px}
+@media (max-width:760px){.pill,.motion-toggle{font-size:14px}}
