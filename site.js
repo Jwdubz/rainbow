@@ -2,8 +2,8 @@
    one Pause/Play control stops every film and the ticker (WCAG 2.2.2). */
 (function(){
   var root=document.documentElement, paused=false;
-  /* pass 78: phone never locks scroll; desktop hero lock capped at 3s and Pause releases it */
-  var isPhone=window.matchMedia('(max-width:760px)').matches;
+  /* Intro: loader, then the hero film plays through once with scroll locked on desktop AND phone (restored from the Oct 6 build).
+     Pause releases the lock at any time. */
   var idoDone=false;
   var vids=[].slice.call(document.querySelectorAll('video'));
   vids.forEach(function(v){v.muted=true;v.defaultMuted=true;v.playsInline=true;v.setAttribute('muted','');});
@@ -36,7 +36,7 @@
   if(window.Lenis){
     lenis=new Lenis({lerp:0.085,wheelMultiplier:0.95,smoothWheel:true});
     root.classList.add('lenis');
-    if(root.classList.contains('is-loading') && !isPhone) lenis.stop();
+    if(root.classList.contains('is-loading')) lenis.stop();
     document.querySelectorAll('a[href^="#"]').forEach(function(a){a.addEventListener('click',function(ev){
       var id=a.getAttribute('href'); var t=id==='#top'?0:document.querySelector(id); if(t===null) return;
       ev.preventDefault(); lenis.scrollTo(t,{duration:1.6,easing:function(x){return x===1?1:1-Math.pow(2,-10*x);}});
@@ -48,7 +48,7 @@
     return root.classList.contains('is-loading') || root.classList.contains('is-hero-lock');
   }
   function blockLockedScroll(e){
-    if(isPhone || !scrollLocked()) return;
+    if(!scrollLocked()) return;
     if(e.type==='keydown'){
       var k=e.key;
       /* allow Space on Pause / links / fields; only block scroll keys */
@@ -99,8 +99,12 @@
   }
   function armHeroUnlockSafety(){
     clearTimeout(heroUnlockSafety);
-    /* film may loop without ended in some engines — force unlock after duration+buffer */
-    var ms=Math.max(400, 3000-(performance.now()-(t0||0)));
+    /* film may loop without ended in some engines, so force unlock after duration+buffer */
+    var ms=22000;
+    if(film){
+      var d=film.duration;
+      if(d && isFinite(d) && d>0) ms=Math.round(d*1000)+1500;
+    }
     heroUnlockSafety=setTimeout(function(){
       if(!heroUnlockDone) unlockHeroOnce();
     }, ms);
@@ -204,24 +208,22 @@
      via CSS top:calc(var(--mast)+12px) - no hide needed. */
 
   var bar=document.querySelector('.loader-bar i'), num=document.querySelector('.loader-bar b');
-  var t0=performance.now(), ready=false, fillMs=isPhone?450:1500;
+  var t0=performance.now(), ready=false;
   Promise.race([
     Promise.all([document.fonts?document.fonts.ready:Promise.resolve(),new Promise(function(r){ if(film&&film.readyState>=3) r(); else if(film){film.addEventListener('canplay',r,{once:true});} else r(); })]),
-    new Promise(function(r){setTimeout(r,isPhone?650:2600);})
+    new Promise(function(r){setTimeout(r,2600);})
   ]).then(function(){ready=true;});
   function step(now){
-    var k=Math.min(1,(now-t0)/fillMs); var p=ready?Math.max(k,0)*100:Math.min(92,k*100);
+    var k=Math.min(1,(now-t0)/1500); var p=ready?Math.max(k,0)*100:Math.min(92,k*100);
     if(ready&&k>=1)p=100;
     bar.style.width=p+'%'; num.textContent=Math.round(p)+'%';
     if(p<100){requestAnimationFrame(step);}
     else{setTimeout(function(){
-      if(!isPhone){
-        try{window.scrollTo(0,0);}catch(err){}
-        if(lenis){lenis.scrollTo(0,{immediate:true});}
-      }
+      try{window.scrollTo(0,0);}catch(err){}
+      if(lenis){lenis.scrollTo(0,{immediate:true});}
       root.classList.remove('is-loading');root.classList.add('is-done');
       /* hold Lenis + native scroll until hero cinematic plays through once */
-      if(film && !isPhone){
+      if(film){
         try{
           film.loop=false;
           film.removeAttribute('loop');
@@ -248,7 +250,7 @@
         if(!iEl||!dEl) return;
         var gen=0;
         function fadeIn(el, done){
-          var dur = (el === dEl) ? 1.2 : 0.9;
+          var dur = (el === dEl) ? 3.4 : 0.9;
           if(window.gsap){
             gsap.fromTo(el,{opacity:0,y:14},{opacity:1,y:0,duration:dur,ease:'power2.out',onComplete:done});
           } else {
@@ -256,7 +258,16 @@
             if(done) setTimeout(done, Math.round(dur*1000));
           }
         }
-        // Once: wait 0.4s, "I" in and holds, "DO." joins it, both stay up in gold; then the Scroll cue (below the words). Never replays.
+        function fadeOut(el, done){
+          if(window.gsap){
+            gsap.to(el,{opacity:0,y:-10,duration:0.7,ease:'power2.in',onComplete:done});
+          } else {
+            el.style.opacity='0';
+            if(done) setTimeout(done,700);
+          }
+        }
+        // Once (Oct 6 timing): wait 3s, I in, hold 7s, I out, DO. in (3.4s), hold 0.25s,
+        // then I returns beside DO. so the hero ends on "I / DO." in gold; Scroll cue below the words. Never replays.
         function settle(el){ el.style.opacity='1'; el.style.transform='none'; el.classList.add('is-in'); }
         function finishIdo(){
           idoDone=true;
@@ -273,13 +284,19 @@
               if(my!==gen || paused) return;
               setTimeout(function(){
                 if(my!==gen || paused) return;
-                fadeIn(dEl, function(){
+                fadeOut(iEl, function(){
                   if(my!==gen || paused) return;
-                  setTimeout(function(){ if(my===gen) finishIdo(); }, 500);
+                  fadeIn(dEl, function(){
+                    if(my!==gen || paused) return;
+                    setTimeout(function(){
+                      if(my!==gen || paused) return;
+                      fadeIn(iEl, function(){ if(my===gen) finishIdo(); });
+                    }, 250);
+                  });
                 });
-              }, 700);
+              }, 7000);
             });
-          }, 400);
+          }, 3000);
         }
         function startCycle(){
           gen++;
