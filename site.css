@@ -37,7 +37,7 @@ a{color:inherit}
 .loader-window video{width:100%;height:100%;object-fit:cover}
 .loader-bar{position:absolute;left:var(--pad);right:var(--pad);bottom:calc(var(--pad)*1.4);height:1px;background:rgba(243,239,232,.22)}
 .loader-bar i{position:absolute;left:0;top:0;height:1px;width:0;background:var(--ink)}
-.loader-bar b{position:absolute;right:0;bottom:8px;font:500 14px/1 var(--sans);letter-spacing:.02em;color:var(--ink-2)}
+.loader-bar b{position:absolute;right:0;bottom:8px;font:500 12px/1 var(--sans);letter-spacing:.06em;color:var(--ink-2)}
 html.is-done .loader{clip-path:inset(0 0 100% 0);pointer-events:none}
 /* pass 5: hide main hero type until loader dismisses - no flash of "can happen HERE" */
 html.is-loading .open-h1,
@@ -302,39 +302,4 @@ html.is-hero-lock .scroll-cue,html.is-loading .scroll-cue{opacity:0!important;vi
   .scroll-cue{left:50%;top:50%;bottom:auto;transform:translate(-50%,-50%) translateY(6px)}
   .scroll-cue.is-on{transform:translate(-50%,-50%)}
   .scroll-cue span{font-size:clamp(40px,12vw,66px);letter-spacing:-.02em}
-}
-
-/* pass 78 */
-.ch-n{font-family:var(--disp);font-style:italic;font-size:clamp(20px,1.6vw,24px);letter-spacing:0;text-transform:none;color:var(--ink-2);line-height:1.2}
-.ch-n .ch-num{font-style:normal;color:var(--gold);margin-right:.3em}
-html.is-scrolled .motion-toggle:hover,html.is-scrolled .motion-toggle:focus-visible{background:var(--ink);color:var(--paper)}
-html.is-scrolled .motion-toggle{color:var(--ink);border-color:var(--ink)}
-@media (hover:none){
-  .motion-toggle:hover{background:color-mix(in srgb,var(--paper) 82%,transparent);color:var(--ink)}
-  html.is-scrolled .motion-toggle:hover{background:transparent;color:var(--ink)}
-  .mast-nav a:hover{background:transparent}
-}
-.open-h1 .ido{-webkit-text-stroke:3px rgba(27,23,20,.55);paint-order:stroke fill;text-shadow:0 1px 2px rgba(27,23,20,.6),0 4px 18px rgba(27,23,20,.55),0 0 60px rgba(27,23,20,.45)}
-.open-h1 .ido-i,.open-h1 .ido-do{color:#e2c46a}
-.scroll-cue span{-webkit-text-stroke:2px rgba(27,23,20,.5);paint-order:stroke fill;text-shadow:0 1px 2px rgba(27,23,20,.6),0 4px 18px rgba(27,23,20,.5)}
-html:not(.is-scrolled) .brand{-webkit-text-stroke:1.5px rgba(27,23,20,.55);paint-order:stroke fill;text-shadow:0 1px 2px rgba(0,0,0,.7),0 0 14px rgba(0,0,0,.5)}
-html:not(.is-scrolled) .brand em{color:#e2c46a}
-.scroll-cue{width:max-content;max-width:94vw}
-.scroll-cue span{white-space:nowrap}
-
-/* pre-send: readable header controls on phone */
-.motion-toggle{font-size:14px}
-@media (max-width:760px){.pill,.motion-toggle{font-size:14px}}
-
-/* pre-send: no one-word last lines in body copy */
-p,li,blockquote,figcaption{text-wrap:pretty}
-
-/* intro ends on "I DO." held in gold; Scroll cue sits below the words, never over them */
-.scroll-cue,html.is-ido-set .scroll-cue{top:auto;bottom:clamp(20px,4.5vh,52px);transform:translate(-50%,8px)}
-.scroll-cue.is-on,html.is-ido-set .scroll-cue.is-on{transform:translate(-50%,0)}
-.scroll-cue span{font-size:clamp(34px,4.2vw,76px)}
-@media (max-width:760px){
-  .scroll-cue,html.is-ido-set .scroll-cue{bottom:max(24px,env(safe-area-inset-bottom));transform:translate(-50%,6px)}
-  .scroll-cue.is-on,html.is-ido-set .scroll-cue.is-on{transform:translate(-50%,0)}
-  .scroll-cue span{font-size:clamp(30px,8.6vw,44px)}
 }

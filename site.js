@@ -2,9 +2,6 @@
    one Pause/Play control stops every film and the ticker (WCAG 2.2.2). */
 (function(){
   var root=document.documentElement, paused=false;
-  /* Intro: loader, then the hero film plays through once with scroll locked on desktop AND phone (restored from the Oct 6 build).
-     Pause releases the lock at any time. */
-  var idoDone=false;
   var vids=[].slice.call(document.querySelectorAll('video'));
   vids.forEach(function(v){v.muted=true;v.defaultMuted=true;v.playsInline=true;v.setAttribute('muted','');});
   function play(v){ if(paused) return; var p=v.play(); if(p&&p.catch) p.catch(function(){}); }
@@ -23,10 +20,7 @@
     root.classList.toggle('is-paused',paused);
     btn.textContent=paused?'Play':'Pause';
     btn.setAttribute('aria-pressed',String(paused));
-    if(paused){
-      vids.forEach(function(v){v.pause();});
-      if(root.classList.contains('is-hero-lock')) unlockHeroOnce();
-    }
+    if(paused){vids.forEach(function(v){v.pause();});}
     else{seen.forEach(play);}
   });
   document.addEventListener('visibilitychange',function(){if(!document.hidden) seen.forEach(play);});
@@ -84,7 +78,7 @@
      No letter/word loop on the cue itself. */
   function showScrollCue(){
     var cue=document.querySelector('.scroll-cue');
-    if(!cue || !idoDone || root.classList.contains('is-hero-lock') || root.classList.contains('is-loading')) return;
+    if(!cue || root.classList.contains('is-hero-lock') || root.classList.contains('is-loading')) return;
     cue.classList.add('is-on');
     cue.setAttribute('aria-hidden','false');
     root.classList.add('is-scroll-cue');
@@ -99,7 +93,7 @@
   }
   function armHeroUnlockSafety(){
     clearTimeout(heroUnlockSafety);
-    /* film may loop without ended in some engines, so force unlock after duration+buffer */
+    /* film may loop without ended in some engines — force unlock after duration+buffer */
     var ms=22000;
     if(film){
       var d=film.duration;
@@ -266,16 +260,7 @@
             if(done) setTimeout(done,700);
           }
         }
-        // Once (Oct 6 timing): wait 3s, I in, hold 7s, I out, DO. in (3.4s), hold 0.25s,
-        // then I returns beside DO. so the hero ends on "I / DO." in gold; Scroll cue below the words. Never replays.
-        function settle(el){ el.style.opacity='1'; el.style.transform='none'; el.classList.add('is-in'); }
-        function finishIdo(){
-          idoDone=true;
-          if(window.gsap){ gsap.killTweensOf([iEl,dEl]); }
-          settle(iEl); settle(dEl);
-          root.classList.add('is-ido-set');
-          showScrollCue();
-        }
+        // Loop: wait 3s → I in → hold 7s → I out → DO. in (3.4s) → hold 0.25s → DO. out (no loop)
         function cycle(my){
           if(my!==gen || paused) return;
           setTimeout(function(){
@@ -290,7 +275,7 @@
                     if(my!==gen || paused) return;
                     setTimeout(function(){
                       if(my!==gen || paused) return;
-                      fadeIn(iEl, function(){ if(my===gen) finishIdo(); });
+                      fadeOut(dEl, function(){ /* no loop */ });
                     }, 250);
                   });
                 });
@@ -302,7 +287,7 @@
           gen++;
           if(window.gsap){ gsap.killTweensOf([iEl,dEl]); }
           iEl.style.opacity='0'; dEl.style.opacity='0';
-          if(!paused) cycle(gen); else finishIdo();
+          if(!paused) cycle(gen);
         }
         // Hook Pause/Play without a second listener stack
         var _btn=btn;
@@ -313,9 +298,11 @@
             setTimeout(function(){
               if(paused){
                 gen++;
-                finishIdo();
+                if(window.gsap){ gsap.killTweensOf([iEl,dEl]); }
+                iEl.style.opacity='0'; dEl.style.opacity='0';
+              } else {
+                startCycle();
               }
-              /* Play never restarts I / DO.; both words stay up */
             }, 0);
           });
         }
