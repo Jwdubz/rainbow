@@ -303,3 +303,4 @@ html.is-hero-lock .scroll-cue,html.is-loading .scroll-cue{opacity:0!important;vi
   .scroll-cue.is-on{transform:translate(-50%,-50%)}
   .scroll-cue span{font-size:clamp(40px,12vw,66px);letter-spacing:-.02em}
 }
+.mast .motion-toggle{margin-left:auto}
