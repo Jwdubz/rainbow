@@ -314,3 +314,29 @@
   }
   requestAnimationFrame(step);
 })();
+
+/* iOS Safari safety net: one-shot scroll reveals always end visible.
+   Covers (1) Pause freezing GSAP mid-page, (2) stale trigger positions after fonts/films change layout,
+   (3) momentum scroll landing at the very bottom without a trigger firing. */
+(function(){
+  var g=window.gsap,ST=window.ScrollTrigger;if(!g||!ST)return;
+  function shots(){return ST.getAll().filter(function(s){return s.animation&&!s.vars.scrub;});}
+  function sweep(){
+    var vh=window.innerHeight,de=document.documentElement;
+    var y=window.scrollY||de.scrollTop||0;var atEnd=y>0&&de.scrollHeight>vh*1.5&&y+vh>=de.scrollHeight-8;
+    var frozen=g.globalTimeline.paused();var all=shots();if(!all.length)return;
+    all.forEach(function(s){
+      var a=s.animation,t=s.trigger;if(!a||a.progress()>=1)return;
+      if(frozen||atEnd){a.progress(1);return;}
+      if(a.isActive())return;if(y>=s.start+2||(t&&t.getBoundingClientRect().top<vh*0.5))a.play();
+    });
+  }
+  var q=null;function later(){clearTimeout(q);q=setTimeout(sweep,180);}
+  window.addEventListener('scroll',later,{passive:true});
+  window.addEventListener('touchend',later,{passive:true});
+  document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('.motion,.motion-toggle,#pauseBtn,.pause'))setTimeout(sweep,0);},true);
+  setInterval(sweep,1200);
+  function refresh(){if(ST.getAll().length){try{ST.refresh();}catch(e){}}later();}
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(refresh);
+  window.addEventListener('load',function(){setTimeout(refresh,1500);});
+})();
