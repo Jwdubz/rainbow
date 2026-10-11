@@ -44,7 +44,7 @@
   }
   /* hero lock releases on the visitor's first scroll attempt; film keeps playing,
      payoff (I DO. + cue) still waits for the film's natural end via unlockHeroOnce */
-  var touchY=null, followTouch=false;
+  var touchY=null, followTouch=false, followY=null;
   function releaseHeroLockEarly(e){
     root.classList.remove('is-hero-lock');
     if(lenis){ lenis.start(); try{lenis.resize();}catch(err){} }
@@ -52,15 +52,19 @@
     if(e && e.type==='wheel' && e.deltaY){
       if(lenis){ try{lenis.scrollTo(lenis.scroll+e.deltaY);}catch(err){} } else window.scrollBy(0,e.deltaY);
     }
-    if(e && e.type==='touchmove'){ followTouch=true; }
+    if(e && e.type==='touchmove'){ followTouch=true; followY=null; }
   }
   window.addEventListener('touchstart',function(e){ touchY=e.touches&&e.touches[0]?e.touches[0].clientY:null; },{passive:true});
   window.addEventListener('touchmove',function(e){
     var y=e.touches&&e.touches[0]?e.touches[0].clientY:null;
-    if(followTouch && touchY!==null && y!==null){ window.scrollBy(0,touchY-y); }
+    if(followTouch && touchY!==null && y!==null){
+      /* if the browser has started panning natively, stop following (no double scroll) */
+      if(followY!==null && Math.abs((window.scrollY||0)-followY)>2){ followTouch=false; }
+      else { window.scrollBy(0,touchY-y); followY=window.scrollY||0; }
+    }
     touchY=y;
   },{passive:true});
-  window.addEventListener('touchend',function(){ followTouch=false; touchY=null; },{passive:true});
+  window.addEventListener('touchend',function(){ followTouch=false; followY=null; touchY=null; },{passive:true});
   function blockLockedScroll(e){
     if(!scrollLocked()) return;
     var loading=root.classList.contains('is-loading');
