@@ -50,7 +50,7 @@ html.is-loading .loader{opacity:1;background:var(--paper)}
 html.is-loading .mast{visibility:hidden}
 
 /* hold scroll after loader until hero cinematic ends once (session); mast stays usable for Pause */
-html.is-hero-lock,html.is-hero-lock body{overflow:hidden!important;height:100%;overscroll-behavior:none;touch-action:none}
+html.is-hero-lock,html.is-hero-lock body{overflow:hidden!important;height:100%;overscroll-behavior:none}
 
 /* mast - flush to viewport top; Pause stays in chrome.
    pass 7: no default translate (Lenis/compositor class of bug); frosted cream backing when scrolled

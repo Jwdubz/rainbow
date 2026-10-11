@@ -42,16 +42,29 @@
   function scrollLocked(){
     return root.classList.contains('is-loading') || root.classList.contains('is-hero-lock');
   }
+  /* hero lock releases on the visitor's first scroll attempt; film keeps playing,
+     payoff (I DO. + cue) still waits for the film's natural end via unlockHeroOnce */
+  function releaseHeroLockEarly(e){
+    root.classList.remove('is-hero-lock');
+    if(lenis){
+      lenis.start();
+      if(e && e.type==='wheel' && e.deltaY){ try{lenis.scrollTo(lenis.scroll+e.deltaY,{lerp:0.085});}catch(err){} }
+    }
+  }
   function blockLockedScroll(e){
     if(!scrollLocked()) return;
+    var loading=root.classList.contains('is-loading');
     if(e.type==='keydown'){
       var k=e.key;
       /* allow Space on Pause / links / fields; only block scroll keys */
       if(k===' ' && e.target && e.target.closest && e.target.closest('button,a,input,textarea,select,[contenteditable]')) return;
-      if(k==='ArrowDown'||k==='ArrowUp'||k==='PageDown'||k==='PageUp'||k==='Home'||k==='End'||k===' ') e.preventDefault();
+      if(k==='ArrowDown'||k==='ArrowUp'||k==='PageDown'||k==='PageUp'||k==='Home'||k==='End'||k===' '){
+        if(loading) e.preventDefault(); else releaseHeroLockEarly(e);
+      }
       return;
     }
-    e.preventDefault();
+    if(loading){ e.preventDefault(); return; }
+    releaseHeroLockEarly(e);
   }
   window.addEventListener('wheel',blockLockedScroll,{passive:false});
   window.addEventListener('touchmove',blockLockedScroll,{passive:false});
