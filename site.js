@@ -44,13 +44,23 @@
   }
   /* hero lock releases on the visitor's first scroll attempt; film keeps playing,
      payoff (I DO. + cue) still waits for the film's natural end via unlockHeroOnce */
+  var touchY=null, followTouch=false;
   function releaseHeroLockEarly(e){
     root.classList.remove('is-hero-lock');
-    if(lenis){
-      lenis.start();
-      if(e && e.type==='wheel' && e.deltaY){ try{lenis.scrollTo(lenis.scroll+e.deltaY,{lerp:0.085});}catch(err){} }
+    if(lenis){ lenis.start(); try{lenis.resize();}catch(err){} }
+    /* let the releasing gesture itself move the page */
+    if(e && e.type==='wheel' && e.deltaY){
+      if(lenis){ try{lenis.scrollTo(lenis.scroll+e.deltaY);}catch(err){} } else window.scrollBy(0,e.deltaY);
     }
+    if(e && e.type==='touchmove'){ followTouch=true; }
   }
+  window.addEventListener('touchstart',function(e){ touchY=e.touches&&e.touches[0]?e.touches[0].clientY:null; },{passive:true});
+  window.addEventListener('touchmove',function(e){
+    var y=e.touches&&e.touches[0]?e.touches[0].clientY:null;
+    if(followTouch && touchY!==null && y!==null){ window.scrollBy(0,touchY-y); }
+    touchY=y;
+  },{passive:true});
+  window.addEventListener('touchend',function(){ followTouch=false; touchY=null; },{passive:true});
   function blockLockedScroll(e){
     if(!scrollLocked()) return;
     var loading=root.classList.contains('is-loading');
