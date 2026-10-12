@@ -145,7 +145,7 @@
   var film=document.querySelector('.open-film');
   /* phone: lighter hero cut (same 1080 frame, smaller file) */
   if(film && window.matchMedia('(max-width:760px)').matches){
-    var sm='film/hero-cinematic-sm.mp4';
+    var sm='film/hero-cinematic-sm.mp4?v=tpz1';
     if(film.getAttribute('src') && film.getAttribute('src').indexOf('hero-cinematic')>-1){
       film.setAttribute('src', sm);
       try{film.load();}catch(e){}
